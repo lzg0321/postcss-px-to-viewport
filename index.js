@@ -36,7 +36,13 @@ module.exports = postcss.plugin('postcss-px-to-viewport', function (options) {
 
       if (blacklistedSelector(opts.selectorBlackList, decl.parent.selector)) return;
 
-      var unit = getUnit(decl.prop, opts)
+      var unit = getUnit(decl.prop, opts);
+      var next = decl.next();
+      if (next && next.type === 'comment' && opts.ignoreComment) {
+        if (next.text === opts.ignoreComment) {
+          return;
+        }
+      }
 
       decl.value = decl.value.replace(pxRegex, createPxReplace(opts.viewportWidth, opts.minPixelValue, opts.unitPrecision, unit));
     });
